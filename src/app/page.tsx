@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { db } from "~/server/db";
 import WorkoutCard from "./component/WorkoutCard";
+import WorkoutForm from "./component/WorkoutForm";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,8 @@ export default async function HomePage() {
           ))}
         </div>
       </div>
+      <WorkoutForm />
+
     </main>
   );
 }
