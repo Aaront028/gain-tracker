@@ -2,6 +2,8 @@ import Link from "next/link";
 import { db } from "~/server/db";
 import WorkoutCard from "./component/WorkoutCard";
 import WorkoutForm from "./component/WorkoutForm";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import SignInPrompt from "./component/SignInPrompt";
 
 export const dynamic = "force-dynamic";
 
@@ -13,19 +15,24 @@ export default async function HomePage() {
 
   return (
     <main className="flex flex-col">
-
-      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Workout Details</h2>
-        <div className="space-y-4">
-          {workouts.map((workout) => (
-            <WorkoutCard key={workout.id} workout={workout} />
-          ))}
+      <SignedOut>
+        <SignInPrompt />
+      </SignedOut>
+      <SignedIn>
+        <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
+          <h2 className="text-2xl font-semibold mb-4 text-center">Workout Details</h2>
+          <div className="space-y-4">
+            {workouts.map((workout) => (
+              <WorkoutCard key={workout.id} workout={workout} />
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4">
-        <WorkoutForm />
-      </div>
+        <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4">
+          <WorkoutForm />
+        </div>
+      </SignedIn>
+
     </main >
   );
 }
