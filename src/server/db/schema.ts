@@ -3,7 +3,7 @@
 
 import { sql } from "drizzle-orm";
 import {
-  index,
+  integer,
   pgTableCreator,
   serial,
   timestamp,
@@ -18,19 +18,46 @@ import {
  */
 export const createTable = pgTableCreator((name) => `gain-tracker_${name}`);
 
-export const posts = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
-    ),
-  },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  })
-);
+// Workouts Table
+export const workouts = createTable("workouts", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id", { length: 255 }).notNull(),
+  date: timestamp("date", { withTimezone: true }).default(
+    sql`CURRENT_TIMESTAMP`,
+  ),
+  exerciseName: varchar("exercise_name", { length: 255 }).notNull(),
+  weight: integer("weight").notNull(),
+  sets: integer("sets").notNull(),
+  reps: integer("reps").notNull(),
+});
+
+// Workouts History Table
+export const workoutsHistory = createTable("workouts_history", {
+  id: serial("id").primaryKey(),
+  workoutId: integer("workout_id")
+    .references(() => workouts.id)
+    .notNull(),
+  userId: varchar("user_id", { length: 255 }).notNull(),
+  date: timestamp("date", { withTimezone: true }).notNull(),
+  weight: integer("weight").notNull(),
+  sets: integer("sets").notNull(),
+  reps: integer("reps").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+// Images Table
+export const images = createTable("image", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 256 }).notNull(),
+  url: varchar("url", { length: 256 }).notNull(),
+  userId: varchar("user_id", { length: 255 }).notNull(),
+  workoutId: integer("workout_id").references(() => workouts.id),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => new Date()),
+});

@@ -1,26 +1,26 @@
 import Link from "next/link";
 import { db } from "~/server/db";
+import WorkoutCard from "./component/WorkoutCard";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
 
-  const posts = await db.query.posts.findMany();
+  const workouts = await db.query.workouts.findMany();
 
-  console.log(posts);
+  console.log(workouts);
 
   return (
     <main className="flex flex-wrap">
-      <h1>Gain Tacker</h1>
-      <ul>
-        {posts.map((post) => (
-          <li key={post.id}>
 
-            <a>{post.name}</a>
-
-          </li>
-        ))}
-      </ul>
+      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4">
+        <h2 className="text-2xl font-semibold mb-4 text-center">Workout Details</h2>
+        <div className="space-y-4">
+          {workouts.map((workout) => (
+            <WorkoutCard key={workout.id} workout={workout} />
+          ))}
+        </div>
+      </div>
     </main>
   );
 }
