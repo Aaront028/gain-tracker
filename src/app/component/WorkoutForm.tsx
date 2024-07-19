@@ -11,7 +11,7 @@ const WorkoutForm: React.FC = () => {
     e.preventDefault();
 
     // Assuming you have an API endpoint for adding workouts
-    const response = await fetch('/api/workouts', {
+    const response = await fetch('/api/workouts/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

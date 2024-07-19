@@ -60,3 +60,25 @@ export async function addWorkout(workout: NewWorkout) {
 
   return newWorkout;
 }
+
+type UpdateWorkoutData = {
+  exerciseName?: string;
+  weight?: number;
+  sets?: number;
+  reps?: number;
+};
+
+export async function updateWorkout(id: number, data: UpdateWorkoutData) {
+  console.log("i'm in the updateworking function");
+  const user = auth();
+
+  if (!user.userId) throw new Error("Unauthorized");
+
+  const updatedWorkout = await db
+    .update(workouts)
+    .set(data)
+    .where(eq(workouts.id, id))
+    .returning();
+
+  return updatedWorkout;
+}
