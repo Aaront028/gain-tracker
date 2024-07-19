@@ -16,7 +16,7 @@ const TopNav = () => {
           <SignInButton />
         </SignedOut>
         <SignedIn>
-          <UploadButton endpoint="imageUploader" onClientUploadComplete={() => { router.refresh() }} />
+          {/* <UploadButton endpoint="imageUploader" onClientUploadComplete={() => { router.refresh() }} /> */}
           <UserButton />
         </SignedIn>
       </div>

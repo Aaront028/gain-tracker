@@ -12,9 +12,9 @@ export default async function HomePage() {
   console.log(workouts);
 
   return (
-    <main className="flex flex-wrap">
+    <main className="flex flex-col">
 
-      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4">
+      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
         <h2 className="text-2xl font-semibold mb-4 text-center">Workout Details</h2>
         <div className="space-y-4">
           {workouts.map((workout) => (
@@ -22,8 +22,10 @@ export default async function HomePage() {
           ))}
         </div>
       </div>
-      <WorkoutForm />
 
-    </main>
+      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4">
+        <WorkoutForm />
+      </div>
+    </main >
   );
 }
