@@ -2,7 +2,7 @@ import "server-only";
 import { db } from "./db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { images, workouts } from "./db/schema";
+import { images, workouts, workoutsHistory } from "./db/schema";
 import { and, eq } from "drizzle-orm";
 
 export async function getMyImages() {
@@ -81,4 +81,30 @@ export async function updateWorkout(id: number, data: UpdateWorkoutData) {
     .returning();
 
   return updatedWorkout;
+}
+
+// export async function deleteWorkout(id: number) {
+//   const deletedWorkout = await db.delete(workouts)
+//     .where(eq(workouts.id, id))
+//     .returning();
+
+//   return deletedWorkout;
+// }
+
+export async function deleteWorkout(id: number) {
+  try {
+    // First, delete related records from workoutsHistory
+    await db.delete(workoutsHistory).where(eq(workoutsHistory.workoutId, id));
+
+    // Then, delete the workout from workouts
+    const deletedWorkout = await db
+      .delete(workouts)
+      .where(eq(workouts.id, id))
+      .returning();
+
+    return deletedWorkout;
+  } catch (error) {
+    console.error("Error deleting workout:", error);
+    throw error; // Ensure the error is propagated
+  }
 }
