@@ -29,7 +29,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onClose }) => {
         weight: parseFloat(weight),
         sets: parseInt(sets, 10),
         reps: parseInt(reps, 10),
-        userName: user?.firstName, // Clerk user's first name
+        userName: user?.firstName ?? user?.username, // Clerk user's first name
         userAvatar: user?.imageUrl
 
       }),
