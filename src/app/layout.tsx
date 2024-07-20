@@ -3,7 +3,7 @@ import "@uploadthing/react/styles.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import TopNav from "./component/TopNav";
+import TopNav from "../components/TopNav";
 import {
   ClerkProvider,
   SignInButton,
@@ -11,6 +11,8 @@ import {
   SignedOut,
   UserButton
 } from '@clerk/nextjs'
+import Footer from "../components/Footer";
+import { Toaster } from "~/components/ui/sonner";
 
 
 
@@ -29,13 +31,18 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable} flex flex-col gap-4`}>
-        <body>
+      <html lang="en" className={`${GeistSans.variable} flex flex-col gap-4 dark`}>
+        <body className="flex flex-col min-h-screen">
 
           <TopNav />
-          {children}
-          {modal}
-          <div id="modal-root" />
+          <main className="flex-grow">
+            {children}
+            {modal}
+            <div id="modal-root" />
+
+          </main>
+          <Toaster />
+          <Footer />
         </body>
       </html>
     </ClerkProvider>

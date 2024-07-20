@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 type Workout = {
   id: number;
@@ -40,10 +41,11 @@ const WorkoutUpdateForm: React.FC<WorkoutUpdateFormProps> = ({ workout, onClose 
     });
 
     if (response.ok) {
+      toast.success('Workout updated successfully');
       onClose();
       router.refresh();
     } else {
-      alert('Failed to update workout.');
+      toast.error('Failed to update workout');
     }
   };
 

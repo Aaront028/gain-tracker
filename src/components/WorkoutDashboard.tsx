@@ -5,9 +5,10 @@ import WorkoutCard from "./WorkoutCard";
 import WorkoutForm from "./WorkoutForm";
 import WorkoutUpdateForm from "./WorkoutUpdateForm";
 import { useRouter } from "next/navigation";
-import Modal from "../@modal/Modal";
-import ConfirmationModal from "../@modal/ConfirmationModal";
+import Modal from "../app/@modal/Modal";
+import ConfirmationModal from "../app/@modal/ConfirmationModal";
 import Image from 'next/image';
+import { toast } from "sonner";
 
 
 interface Workout {
@@ -69,10 +70,11 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
       });
 
       if (response.ok) {
+        toast.success('Workout deleted successfully');
         router.refresh();
 
       } else {
-        alert('Failed to delete workout.');
+        toast.error('Failed to delete workout');
       }
 
       handleCloseConfirmation();
@@ -84,6 +86,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
   };
 
   const handleAddButtonClick = () => {
+
     handleOpenModal('add');
   };
 

@@ -2,6 +2,7 @@
 import { useClerk } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 interface WorkoutFormProps {
   onClose: () => void;
@@ -42,10 +43,10 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onClose }) => {
       setReps('');
 
       router.refresh();
-
+      toast.success('Workout added successfully');
       onClose();
     } else {
-      alert('Failed to add workout.');
+      toast.error('Failed to add workout');
     }
   };
 
