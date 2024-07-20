@@ -23,7 +23,8 @@ const WorkoutForm: React.FC = () => {
         weight: parseFloat(weight),
         sets: parseInt(sets, 10),
         reps: parseInt(reps, 10),
-        userName: user?.firstName // Clerk user's first name
+        userName: user?.firstName, // Clerk user's first name
+        userAvatar: user?.imageUrl
 
       }),
     });

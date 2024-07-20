@@ -36,6 +36,7 @@ export const workouts = createTable("workouts", {
     .references(() => users.clerkUserId)
     .notNull(),
   userName: varchar("user_name", { length: 255 }).notNull(),
+  userAvatar: varchar("user_avatar", { length: 255 }),
   date: timestamp("date", { withTimezone: true }).default(
     sql`CURRENT_TIMESTAMP`,
   ),

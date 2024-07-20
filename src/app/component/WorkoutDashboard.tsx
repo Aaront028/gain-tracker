@@ -7,6 +7,8 @@ import WorkoutUpdateForm from "./WorkoutUpdateForm";
 import { useRouter } from "next/navigation";
 import Modal from "../@modal/Modal";
 import ConfirmationModal from "../@modal/ConfirmationModal";
+import Image from 'next/image';
+
 
 interface Workout {
   id: number;
@@ -16,21 +18,22 @@ interface Workout {
   reps: number;
   userId: string;
   userName: string;
+  userAvatar: string | null; // Add userAvatar to the Workout interface
 }
 
 interface WorkoutDashboardProps {
   workouts: Workout[];
   currentUserId: string | undefined;
+  currentUserAvatar: string | undefined;
 }
 
-const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUserId }) => {
+const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUserId, currentUserAvatar }) => {
   const router = useRouter();
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<'add' | 'edit'>('add');
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [workoutToDelete, setWorkoutToDelete] = useState<Workout | null>(null);
-
 
   const handleOpenModal = (type: 'add' | 'edit' = 'add', workout?: Workout) => {
     setModalContent(type);
@@ -102,10 +105,20 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
           ) : (
             Array.from(groupedWorkouts.entries()).map(([userId, userWorkouts]: [string, Workout[]]) => {
               const userName = userWorkouts[0]?.userName; // Get userName from the first workout
+              const userAvatar = userWorkouts[0]?.userAvatar; // Get userAvatar from the first workout
               return (
                 <div key={userId} className="bg-gray-800 p-4 rounded-lg shadow-md mb-6">
-                  <h3 className="text-xl font-semibold mb-4">
-                    {userName}&apos;s Workouts
+                  <h3 className="text-xl font-semibold mb-4 flex items-center">
+
+                    <Image
+                      src={userAvatar ?? '/default-avatar.png'} // Provide a default value for the src attribute
+                      alt={`${userName}'s Avatar`}
+                      width={40} // Adjust width as needed
+                      height={40} // Adjust height as needed
+                      className="rounded-full mr-4"
+                    />
+
+                    User {userName}&apos;s Workouts
                   </h3>
                   {userWorkouts.map((workout) => (
                     <div key={workout.id} className="mb-4">
@@ -150,7 +163,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
         isOpen={isConfirmationOpen}
         onClose={handleCloseConfirmation}
         onConfirm={handleConfirmDelete}
-        message={`Are you sure you want to delete this workout: ${workoutToDelete?.exerciseName}?`}
+        message={`Are you sure you want to delete this workout?`}
       />
     </div>
   );

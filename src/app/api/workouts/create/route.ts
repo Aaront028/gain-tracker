@@ -10,6 +10,7 @@ interface WorkoutData {
   sets: number;
   reps: number;
   userName: string; // Ensure this property exists
+  userAvatar: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -18,8 +19,14 @@ export async function POST(req: NextRequest) {
 
     console.log("req", req);
     // Parse the JSON body from the request
-    const { exerciseName, weight, sets, reps, userName }: WorkoutData =
-      (await req.json()) as WorkoutData;
+    const {
+      exerciseName,
+      weight,
+      sets,
+      reps,
+      userName,
+      userAvatar,
+    }: WorkoutData = (await req.json()) as WorkoutData;
 
     // Validate the input data
     if (
@@ -27,7 +34,8 @@ export async function POST(req: NextRequest) {
       typeof weight !== "number" ||
       typeof sets !== "number" ||
       typeof reps !== "number" ||
-      typeof userName !== "string"
+      typeof userName !== "string" ||
+      typeof userAvatar !== "string"
     ) {
       return NextResponse.json(
         { error: "Invalid input data" },
@@ -43,6 +51,7 @@ export async function POST(req: NextRequest) {
       reps,
       userId: userId!,
       userName,
+      userAvatar,
     });
 
     // Return a success response
