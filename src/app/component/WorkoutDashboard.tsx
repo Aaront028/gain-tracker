@@ -118,7 +118,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
                       className="rounded-full mr-4"
                     />
 
-                    User {userName}&apos;s Workouts
+                    {userName}&apos;s Workouts
                   </h3>
                   {userWorkouts.map((workout) => (
                     <div key={workout.id} className="mb-4">
