@@ -156,7 +156,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
           Add Workout
         </button>
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-          {modalContent === 'add' ? <WorkoutForm /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} />}
+          {modalContent === 'add' ? <WorkoutForm onClose={handleCloseModal} /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} onClose={handleCloseModal} />}
         </Modal>
       </div>
       <ConfirmationModal

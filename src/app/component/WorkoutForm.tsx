@@ -1,8 +1,14 @@
 'use client'
 import { useClerk } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-const WorkoutForm: React.FC = () => {
+interface WorkoutFormProps {
+  onClose: () => void;
+}
+
+const WorkoutForm: React.FC<WorkoutFormProps> = ({ onClose }) => {
+  const router = useRouter();
   const { user } = useClerk();
   const [exerciseName, setExerciseName] = useState('');
   const [weight, setWeight] = useState('');
@@ -36,6 +42,8 @@ const WorkoutForm: React.FC = () => {
       setSets('');
       setReps('');
       // alert('Workout added successfully!');
+      router.refresh();
+      onClose();
     } else {
       alert('Failed to add workout.');
     }

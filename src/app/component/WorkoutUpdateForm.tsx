@@ -13,9 +13,10 @@ type Workout = {
 
 type WorkoutUpdateFormProps = {
   workout: Workout;
+  onClose: () => void;
 };
 
-const WorkoutUpdateForm: React.FC<WorkoutUpdateFormProps> = ({ workout }) => {
+const WorkoutUpdateForm: React.FC<WorkoutUpdateFormProps> = ({ workout, onClose }) => {
   const router = useRouter();
   const [exerciseName, setExerciseName] = useState(workout.exerciseName);
   const [weight, setWeight] = useState(workout.weight.toString());
@@ -39,7 +40,7 @@ const WorkoutUpdateForm: React.FC<WorkoutUpdateFormProps> = ({ workout }) => {
     });
 
     if (response.ok) {
-      alert('Workout updated successfully!');
+      onClose();
       router.refresh();
     } else {
       alert('Failed to update workout.');
