@@ -2,7 +2,7 @@ import "server-only";
 import { db } from "./db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { images, workouts, workoutsHistory } from "./db/schema";
+import { images, users, workouts, workoutsHistory } from "./db/schema";
 import { and, eq } from "drizzle-orm";
 
 export async function getMyImages() {
@@ -107,4 +107,68 @@ export async function deleteWorkout(id: number) {
     console.error("Error deleting workout:", error);
     throw error; // Ensure the error is propagated
   }
+}
+// Define interfaces
+interface Workout {
+  id: number;
+  exerciseName: string;
+  weight: number;
+  sets: number;
+  reps: number;
+}
+
+interface User {
+  name: string;
+}
+
+interface WorkoutWithUser extends Workout {
+  name: string; // user's name
+}
+
+type GroupedWorkouts = Record<string, Workout[]>;
+
+// Fetch and group workouts
+export async function getAllWorkoutsGroupedByUser(): Promise<GroupedWorkouts> {
+  const user = auth();
+
+  if (!user.userId) throw new Error("Unauthorized");
+
+  // Fetch all workouts with their associated users
+  const allWorkouts = (await db
+    .select({
+      id: workouts.id,
+      exerciseName: workouts.exerciseName,
+      weight: workouts.weight,
+      sets: workouts.sets,
+      reps: workouts.reps,
+      name: users.name,
+    })
+    .from(workouts)
+    .leftJoin(
+      users,
+      eq(workouts.userId, users.clerkUserId),
+    )) as WorkoutWithUser[]; // Type assertion
+
+  // Group workouts by user
+  const groupedWorkouts: GroupedWorkouts = {};
+
+  allWorkouts.forEach((workout) => {
+    // Ensure the user's workouts array exists
+    const userName = workout.name;
+    if (userName) {
+      // Ensure the workout has a name
+      if (!groupedWorkouts[userName]) {
+        groupedWorkouts[userName] = [];
+      }
+      groupedWorkouts[userName].push({
+        id: workout.id,
+        exerciseName: workout.exerciseName,
+        weight: workout.weight,
+        sets: workout.sets,
+        reps: workout.reps,
+      });
+    }
+  });
+
+  return groupedWorkouts;
 }

@@ -1,7 +1,9 @@
 'use client'
+import { useClerk } from '@clerk/nextjs';
 import React, { useState } from 'react';
 
 const WorkoutForm: React.FC = () => {
+  const { user } = useClerk();
   const [exerciseName, setExerciseName] = useState('');
   const [weight, setWeight] = useState('');
   const [sets, setSets] = useState('');
@@ -9,7 +11,7 @@ const WorkoutForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log("user>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", user);
     // Assuming you have an API endpoint for adding workouts
     const response = await fetch('/api/workouts/create', {
       method: 'POST',
@@ -21,6 +23,8 @@ const WorkoutForm: React.FC = () => {
         weight: parseFloat(weight),
         sets: parseInt(sets, 10),
         reps: parseInt(reps, 10),
+        userName: user?.firstName // Clerk user's first name
+
       }),
     });
 
@@ -30,16 +34,17 @@ const WorkoutForm: React.FC = () => {
       setWeight('');
       setSets('');
       setReps('');
-      alert('Workout added successfully!');
+      // alert('Workout added successfully!');
     } else {
       alert('Failed to add workout.');
     }
   };
-
+  console.log("user", user)
   return (
     <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
       <div>
         <label htmlFor="exerciseName" className="block text-white">Exercise Name:</label>
+
         <input
           type="text"
           id="exerciseName"
