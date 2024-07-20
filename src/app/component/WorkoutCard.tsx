@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Define the TypeScript interface for the workout prop
 interface Workout {
   id: number;
   exerciseName: string;

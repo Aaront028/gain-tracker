@@ -17,8 +17,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("user>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", user);
-    // Assuming you have an API endpoint for adding workouts
+
     const response = await fetch('/api/workouts/create', {
       method: 'POST',
       headers: {
@@ -29,26 +28,27 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onClose }) => {
         weight: parseFloat(weight),
         sets: parseInt(sets, 10),
         reps: parseInt(reps, 10),
-        userName: user?.firstName ?? user?.username, // Clerk user's first name
+        userName: user?.firstName ?? user?.username,
         userAvatar: user?.imageUrl
 
       }),
     });
 
     if (response.ok) {
-      // Clear the form or provide feedback
+
       setExerciseName('');
       setWeight('');
       setSets('');
       setReps('');
-      // alert('Workout added successfully!');
+
       router.refresh();
+
       onClose();
     } else {
       alert('Failed to add workout.');
     }
   };
-  console.log("user", user)
+
   return (
     <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
       <div>

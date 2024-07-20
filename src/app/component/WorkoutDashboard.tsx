@@ -18,7 +18,7 @@ interface Workout {
   reps: number;
   userId: string;
   userName: string;
-  userAvatar: string | null; // Add userAvatar to the Workout interface
+  userAvatar: string | null;
 }
 
 interface WorkoutDashboardProps {
@@ -45,7 +45,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedWorkout(null);  // Reset selected workout when modal closes
+    setSelectedWorkout(null);
   };
 
   const handleEditClick = (workout: Workout) => {
@@ -70,7 +70,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
 
       if (response.ok) {
         router.refresh();
-        // alert('Workout deleted successfully!');
+
       } else {
         alert('Failed to delete workout.');
       }
@@ -104,17 +104,17 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
             <p className="text-center">No workouts found.</p>
           ) : (
             Array.from(groupedWorkouts.entries()).map(([userId, userWorkouts]: [string, Workout[]]) => {
-              const userName = userWorkouts[0]?.userName; // Get userName from the first workout
-              const userAvatar = userWorkouts[0]?.userAvatar; // Get userAvatar from the first workout
+              const userName = userWorkouts[0]?.userName;
+              const userAvatar = userWorkouts[0]?.userAvatar;
               return (
                 <div key={userId} className="bg-gray-800 p-4 rounded-lg shadow-md mb-6">
                   <h3 className="text-xl font-semibold mb-4 flex items-center">
 
                     <Image
-                      src={userAvatar ?? '/default-avatar.png'} // Provide a default value for the src attribute
+                      src={userAvatar ?? '/default-avatar.png'}
                       alt={`${userName}'s Avatar`}
-                      width={40} // Adjust width as needed
-                      height={40} // Adjust height as needed
+                      width={40}
+                      height={40}
                       className="rounded-full mr-4"
                     />
 
