@@ -30,65 +30,6 @@ interface WorkoutDashboardProps {
 
 const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUserId, currentUserAvatar }) => {
   const router = useRouter();
-  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState<'add' | 'edit'>('add');
-  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-  const [workoutToDelete, setWorkoutToDelete] = useState<Workout | null>(null);
-
-  const handleOpenModal = (type: 'add' | 'edit' = 'add', workout?: Workout) => {
-    setModalContent(type);
-    if (type === 'edit' && workout) {
-      setSelectedWorkout(workout);
-    }
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedWorkout(null);
-  };
-
-  const handleEditClick = (workout: Workout) => {
-    handleOpenModal('edit', workout);
-  };
-
-  const handleOpenConfirmation = (workout: Workout) => {
-    setWorkoutToDelete(workout);
-    setIsConfirmationOpen(true);
-  };
-
-  const handleCloseConfirmation = () => {
-    setIsConfirmationOpen(false);
-    setWorkoutToDelete(null);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (workoutToDelete) {
-      const response = await fetch(`/api/workouts/${workoutToDelete.id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        toast.success('Workout deleted successfully');
-        router.refresh();
-
-      } else {
-        toast.error('Failed to delete workout');
-      }
-
-      handleCloseConfirmation();
-    }
-  };
-
-  const handleDeleteClick = (workout: Workout) => {
-    handleOpenConfirmation(workout);
-  };
-
-  const handleAddButtonClick = () => {
-
-    handleOpenModal('add');
-  };
 
   // Group workouts by userId using Map
   const groupedWorkouts = workouts.reduce((map, workout) => {
@@ -126,22 +67,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
                   {userWorkouts.map((workout) => (
                     <div key={workout.id} className="mb-4">
                       <WorkoutCard workout={workout} />
-                      {workout.userId === currentUserId && (
-                        <>
-                          <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
-                            onClick={() => handleEditClick(workout)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="bg-red-500 text-white px-4 py-2 rounded mt-2 ml-2"
-                            onClick={() => handleDeleteClick(workout)}
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
+
                     </div>
                   ))}
                 </div>
@@ -150,24 +76,6 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
           )}
         </div>
       </div>
-
-      <div className="flex justify-center mb-4">
-        <button
-          className="bg-green-500 text-white px-4 py-2 rounded mb-4"
-          onClick={handleAddButtonClick}
-        >
-          Add Workout
-        </button>
-        <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-          {modalContent === 'add' ? <WorkoutForm onClose={handleCloseModal} /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} onClose={handleCloseModal} />}
-        </Modal>
-      </div>
-      <ConfirmationModal
-        isOpen={isConfirmationOpen}
-        onClose={handleCloseConfirmation}
-        onConfirm={handleConfirmDelete}
-        message={`Are you sure you want to delete this workout?`}
-      />
     </div>
   );
 };

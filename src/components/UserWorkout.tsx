@@ -34,6 +34,7 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
   const [modalContent, setModalContent] = useState<'add' | 'edit'>('add');
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [workoutToDelete, setWorkoutToDelete] = useState<Workout | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleOpenModal = (type: 'add' | 'edit' = 'add', workout?: Workout) => {
     setModalContent(type);
@@ -101,7 +102,7 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
             userWorkouts.map((workout) => (
               <div key={workout.id} className="mb-4">
                 <WorkoutCard workout={workout} />
-                <>
+                {isEditing ? <>
                   <button
                     className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
                     onClick={() => handleEditClick(workout)}
@@ -114,7 +115,7 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
                   >
                     Delete
                   </button>
-                </>
+                </> : null}
               </div>
             ))
           )}
