@@ -13,6 +13,7 @@ import {
 } from '@clerk/nextjs'
 import Footer from "../components/Footer";
 import { Toaster } from "~/components/ui/sonner";
+import { CSPostHogProvider } from "./_analytics/provider";
 
 
 
@@ -31,20 +32,22 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable} flex flex-col gap-4 dark`}>
-        <body className="flex flex-col min-h-screen">
+      <CSPostHogProvider>
+        <html lang="en" className={`${GeistSans.variable} flex flex-col gap-4 dark`}>
+          <body className="flex flex-col min-h-screen">
 
-          <TopNav />
-          <main className="flex-grow">
-            {children}
-            {modal}
-            <div id="modal-root" />
+            <TopNav />
+            <main className="flex-grow">
+              {children}
+              {modal}
+              <div id="modal-root" />
 
-          </main>
-          <Toaster />
-          <Footer />
-        </body>
-      </html>
+            </main>
+            <Toaster />
+            <Footer />
+          </body>
+        </html>
+      </CSPostHogProvider>
     </ClerkProvider>
   );
 }
