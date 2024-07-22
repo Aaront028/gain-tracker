@@ -36,6 +36,10 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
   const [workoutToDelete, setWorkoutToDelete] = useState<Workout | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const handleIsEdit = () => {
+    setIsEditing(!isEditing);
+  }
+
   const handleOpenModal = (type: 'add' | 'edit' = 'add', workout?: Workout) => {
     setModalContent(type);
     if (type === 'edit' && workout) {
@@ -124,10 +128,16 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
 
       <div className="flex justify-center mb-4">
         <button
-          className="bg-green-500 text-white px-4 py-2 rounded mb-4"
+          className="bg-green-500 text-white px-4 py-2 rounded mb-4 mr-4"
           onClick={handleAddButtonClick}
         >
           Add Workout
+        </button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+          onClick={handleIsEdit}
+        >
+          {isEditing ? "Hide" : "Edit"}
         </button>
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
           {modalContent === 'add' ? <WorkoutForm onClose={handleCloseModal} /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} onClose={handleCloseModal} />}
