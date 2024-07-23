@@ -9,4 +9,9 @@ export default {
     url: env.POSTGRES_URL,
   },
   tablesFilter: ["gain-tracker_*"],
+
+  out: "./src/server/db/migrations",
+  migrations: {
+    table: "my_migrations_table", // Optional: Customize the migrations table name
+  },
 } satisfies Config;

@@ -67,3 +67,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.blur-effect {
+  filter: blur(5px);
+}

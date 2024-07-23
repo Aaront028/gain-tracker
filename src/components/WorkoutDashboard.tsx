@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import WorkoutCard from "./WorkoutCard";
 import { useRouter } from "next/navigation";
@@ -14,13 +13,13 @@ interface Workout {
   userId: string;
   userName: string;
   userAvatar: string | null;
+  show_workout: boolean; // Add this line
 }
 
 interface Exercise {
   id: number;
   name: string;
 }
-
 
 interface WorkoutDashboardProps {
   workouts: Workout[];
