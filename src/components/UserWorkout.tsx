@@ -19,6 +19,13 @@ interface Workout {
   userId: string;
   userName: string;
   userAvatar: string | null;
+  show_workout: boolean;
+}
+
+interface Exercise {
+  id: number;
+  name: string;
+  category: string;
 }
 
 interface Exercise {
@@ -99,6 +106,31 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
     handleOpenModal('add');
   };
 
+
+  const handleShowWorkout = async (workout: Workout) => {
+    console.log("THIS IS THE SELECTED WORKOUT", workout)
+    if (workout) {
+      const response = await fetch(`/api/workouts/${workout.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          show_workout: !workout.show_workout,
+        }),
+      });
+
+
+      if (response.ok) {
+        // toast.success(' show successfully');
+        router.refresh();
+      } else {
+        toast.error('Failed hide or show workout');
+      }
+
+    }
+  };
+
   // Filter workouts to show only those of the current user
   const userWorkouts = workouts.filter(workout => workout.userId === currentUserId);
 
@@ -126,6 +158,14 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
                   >
                     Delete
                   </button>
+                  <button
+                    className={`px-4 py-2 rounded mt-2 ml-2 text-white ${workout.show_workout ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+                      }`}
+                    onClick={() => handleShowWorkout(workout)}
+                  >
+                    {workout.show_workout ? "Hide Workout" : "Show Workout"}
+                  </button>
+
                 </> : null}
               </div>
             ))
