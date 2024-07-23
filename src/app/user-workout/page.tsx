@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function UserWorkoutPage() {
   const workouts = await db.query.workouts.findMany();
+  const exercises = await db.query.exercises.findMany();
   const user = await currentUser();
   const currentUserId = user?.id;
   const currentUserAvatar = user?.imageUrl;
@@ -19,7 +20,7 @@ export default async function UserWorkoutPage() {
         <SignInPrompt />
       </SignedOut>
       <SignedIn>
-        <UserWorkout workouts={workouts} currentUserId={currentUserId} currentUserAvatar={currentUserAvatar} />
+        <UserWorkout workouts={workouts} currentUserId={currentUserId} currentUserAvatar={currentUserAvatar} exercises={exercises} />
       </SignedIn>
     </div>
   );

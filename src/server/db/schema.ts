@@ -29,6 +29,14 @@ export const users = createTable("users", {
     .$onUpdate(() => new Date()),
 });
 
+// Exercises Table
+export const exercises = createTable("exercises", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  category: varchar("category", { length: 255 }).notNull(), // e.g., 'Biceps', 'Chest'
+  description: varchar("description", { length: 500 }), // Optional description of the exercise
+});
+
 // Workouts Table
 export const workouts = createTable("workouts", {
   id: serial("id").primaryKey(),
@@ -40,7 +48,10 @@ export const workouts = createTable("workouts", {
   date: timestamp("date", { withTimezone: true }).default(
     sql`CURRENT_TIMESTAMP`,
   ),
-  exerciseName: varchar("exercise_name", { length: 255 }).notNull(),
+  exerciseId: integer("exercise_id")
+    .references(() => exercises.id)
+    .notNull(),
+  exerciseName: varchar("exercise_name", { length: 255 }).notNull(), // Added field
   weight: integer("weight").notNull(),
   sets: integer("sets").notNull(),
   reps: integer("reps").notNull(),
@@ -56,6 +67,10 @@ export const workoutsHistory = createTable("workouts_history", {
     .references(() => users.clerkUserId) // References Clerk user ID
     .notNull(),
   date: timestamp("date", { withTimezone: true }).notNull(),
+  exerciseId: integer("exercise_id")
+    .references(() => exercises.id) // Optional: reference to the exercises table
+    .notNull(),
+  exerciseName: varchar("exercise_name", { length: 255 }).notNull(), // Added field
   weight: integer("weight").notNull(),
   sets: integer("sets").notNull(),
   reps: integer("reps").notNull(),
@@ -66,7 +81,6 @@ export const workoutsHistory = createTable("workouts_history", {
 
 // Images Table
 export const images = createTable("image", {
-  // Renamed from 'image' to 'images' for consistency
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
   url: varchar("url", { length: 256 }).notNull(),
