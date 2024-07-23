@@ -28,18 +28,6 @@ interface Exercise {
   category: string;
 }
 
-interface Exercise {
-  id: number;
-  name: string;
-  category: string;
-}
-
-interface Exercise {
-  id: number;
-  name: string;
-  category: string;
-}
-
 interface UserWorkoutProps {
   workouts: Workout[];
   currentUserId: string | undefined;

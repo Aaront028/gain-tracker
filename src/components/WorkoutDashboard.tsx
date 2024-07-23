@@ -21,12 +21,6 @@ interface Exercise {
   name: string;
 }
 
-interface Exercise {
-  id: number;
-  name: string;
-}
-
-
 interface WorkoutDashboardProps {
   workouts: Workout[];
   currentUserId: string | undefined;
