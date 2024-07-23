@@ -96,7 +96,7 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
   const userWorkouts = workouts.filter(workout => workout.userId === currentUserId);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col p-6">
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
         <h2 className="text-2xl font-semibold mb-4 text-center">Your Workouts</h2>
         <div className="space-y-4">
