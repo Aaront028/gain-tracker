@@ -50,6 +50,8 @@ type NewWorkout = typeof workouts.$inferInsert;
 export async function addWorkout(workout: NewWorkout) {
   const user = auth();
 
+  console.log("user", user);
+
   if (!user.userId) throw new Error("Unauthorized");
 
   // Ensure that userId and other required fields are included

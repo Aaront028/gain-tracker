@@ -16,13 +16,20 @@ interface Workout {
   userAvatar: string | null;
 }
 
+interface Exercise {
+  id: number;
+  name: string;
+}
+
+
 interface WorkoutDashboardProps {
   workouts: Workout[];
   currentUserId: string | undefined;
   currentUserAvatar: string | undefined;
+  exercises: Exercise[];
 }
 
-const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUserId, currentUserAvatar }) => {
+const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUserId, currentUserAvatar, exercises }) => {
   const router = useRouter();
 
   // Group workouts by userId using Map

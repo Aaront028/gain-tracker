@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from "react";
 import WorkoutCard from "./WorkoutCard";
@@ -7,11 +7,11 @@ import WorkoutUpdateForm from "./WorkoutUpdateForm";
 import { useRouter } from "next/navigation";
 import Modal from "../app/@modal/Modal";
 import ConfirmationModal from "../app/@modal/ConfirmationModal";
-import Image from 'next/image';
 import { toast } from "sonner";
 
 interface Workout {
   id: number;
+  exerciseId: number;
   exerciseName: string;
   weight: number;
   sets: number;
@@ -21,13 +21,20 @@ interface Workout {
   userAvatar: string | null;
 }
 
+interface Exercise {
+  id: number;
+  name: string;
+  category: string;
+}
+
 interface UserWorkoutProps {
   workouts: Workout[];
   currentUserId: string | undefined;
   currentUserAvatar: string | undefined;
+  exercises: Exercise[];
 }
 
-const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, currentUserAvatar }) => {
+const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, currentUserAvatar, exercises }) => {
   const router = useRouter();
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -140,7 +147,7 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
           {isEditing ? "Hide" : "Edit"}
         </button>
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-          {modalContent === 'add' ? <WorkoutForm onClose={handleCloseModal} /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} onClose={handleCloseModal} />}
+          {modalContent === 'add' ? <WorkoutForm onClose={handleCloseModal} exercises={exercises} /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} onClose={handleCloseModal} exercises={exercises} />}
         </Modal>
       </div>
       <ConfirmationModal
