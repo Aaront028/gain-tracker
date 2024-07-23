@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 interface Workout {
   id: number;
+  exerciseId: number;
   exerciseName: string;
   weight: number;
   sets: number;
@@ -146,7 +147,7 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
           {isEditing ? "Hide" : "Edit"}
         </button>
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-          {modalContent === 'add' ? <WorkoutForm onClose={handleCloseModal} exercises={exercises} /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} onClose={handleCloseModal} />}
+          {modalContent === 'add' ? <WorkoutForm onClose={handleCloseModal} exercises={exercises} /> : selectedWorkout && <WorkoutUpdateForm workout={selectedWorkout} onClose={handleCloseModal} exercises={exercises} />}
         </Modal>
       </div>
       <ConfirmationModal
