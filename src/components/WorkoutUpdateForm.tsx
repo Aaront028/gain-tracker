@@ -50,7 +50,7 @@ const WorkoutUpdateForm: React.FC<WorkoutUpdateFormProps> = ({ workout, onClose 
   };
 
   return (
-    <form onSubmit={handleUpdate} className="bg-gray-800 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4">
+    <form onSubmit={handleUpdate} className="bg-gray-800 text-white p-6 rounded-lg w-full max-w-md mx-auto space-y-4">
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-300">Exercise Name</label>
         <input

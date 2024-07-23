@@ -1,15 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import WorkoutCard from "./WorkoutCard";
-import WorkoutForm from "./WorkoutForm";
-import WorkoutUpdateForm from "./WorkoutUpdateForm";
 import { useRouter } from "next/navigation";
-import Modal from "../app/@modal/Modal";
-import ConfirmationModal from "../app/@modal/ConfirmationModal";
 import Image from 'next/image';
-import { toast } from "sonner";
-
 
 interface Workout {
   id: number;
@@ -40,10 +34,10 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
   }, new Map<string, Workout[]>());
 
   return (
-    <div className="flex flex-col">
-      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
+    <div className="p-6">
+      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-7xl mx-auto space-y-4 mb-6">
         <h2 className="text-2xl font-semibold mb-4 text-center">Workout Details</h2>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {groupedWorkouts.size === 0 ? (
             <p className="text-center">No workouts found.</p>
           ) : (
@@ -51,9 +45,8 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
               const userName = userWorkouts[0]?.userName;
               const userAvatar = userWorkouts[0]?.userAvatar;
               return (
-                <div key={userId} className="bg-gray-800 p-4 rounded-lg shadow-md mb-6">
+                <div key={userId} className="bg-gray-800 p-4 rounded-lg shadow-md">
                   <h3 className="text-xl font-semibold mb-4 flex items-center">
-
                     <Image
                       src={userAvatar ?? '/default-avatar.png'}
                       alt={`${userName}'s Avatar`}
@@ -61,13 +54,11 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
                       height={40}
                       className="rounded-full mr-4"
                     />
-
                     {userName}&apos;s Workouts
                   </h3>
                   {userWorkouts.map((workout) => (
                     <div key={workout.id} className="mb-4">
                       <WorkoutCard workout={workout} />
-
                     </div>
                   ))}
                 </div>

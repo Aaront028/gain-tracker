@@ -13,14 +13,20 @@
 }
 
 .modal {
-  background: #333; /* Change this to your preferred background color */
-  color: #fff; /* Set the text color for better contrast */
+  background: #333; /* Modal background color */
+  color: #fff; /* Text color for better contrast */
   padding: 20px;
   border-radius: 8px;
   position: relative;
-  max-width: 500px;
+  max-width: 80vw;
+  max-height: 80vh;
   width: 100%;
+  height: 100%; /* Make sure it fills the overlay */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add a shadow for depth */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .closeButton {

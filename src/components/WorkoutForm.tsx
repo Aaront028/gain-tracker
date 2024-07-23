@@ -51,7 +51,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+    <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg space-y-4">
       <div>
         <label htmlFor="exerciseName" className="block text-white">Exercise Name:</label>
 
