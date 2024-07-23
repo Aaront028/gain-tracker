@@ -6,10 +6,12 @@ interface WorkoutDataType {
   weight?: number;
   sets?: number;
   reps?: number;
+  show_workout?: boolean;
 }
 
 export const PUT = async (req: NextRequest) => {
   try {
+    console.log("i'm in the updateworking function");
     const url = new URL(req.url);
     const id = url.pathname.split("/").pop();
 

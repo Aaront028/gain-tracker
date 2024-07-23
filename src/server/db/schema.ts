@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   integer,
   pgTableCreator,
   serial,
@@ -55,6 +56,7 @@ export const workouts = createTable("workouts", {
   weight: integer("weight").notNull(),
   sets: integer("sets").notNull(),
   reps: integer("reps").notNull(),
+  show_workout: boolean("show_workout").default(true).notNull(),
 });
 
 // Workouts History Table

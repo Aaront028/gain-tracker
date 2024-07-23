@@ -7,6 +7,24 @@ import WorkoutDashboard from "../components/WorkoutDashboard";
 
 export const dynamic = "force-dynamic";
 
+interface Exercise {
+  id: number;
+  name: string;
+}
+
+interface Workout {
+  id: number;
+  exerciseId: number;
+  exerciseName: string;
+  weight: number;
+  sets: number;
+  reps: number;
+  userId: string;
+  userName: string;
+  userAvatar: string | null;
+  show_workout: boolean;
+}
+
 export default async function HomePage() {
   const workouts = await db.query.workouts.findMany();
   const exercises = await db.query.exercises.findMany();
