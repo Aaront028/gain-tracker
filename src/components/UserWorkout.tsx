@@ -143,7 +143,12 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
         // Fetch history only if it hasn't been fetched before
         const response = await fetch(`/api/workouts/${workoutId}/history`);
         const history: WorkoutHistory[] = await response.json() as WorkoutHistory[];
-        setWorkoutHistory(prevHistory => [...prevHistory, ...history]);
+
+        // Ensure no duplicate histories are added
+        const existingHistoryIds = new Set(workoutHistory.map(h => h.id));
+        const newHistory = history.filter(h => !existingHistoryIds.has(h.id));
+
+        setWorkoutHistory(prevHistory => [...prevHistory, ...newHistory]);
         setFetchedHistories(prevFetched => [...prevFetched, workoutId]);
       }
       setHistoryVisible([...historyVisible, workoutId]);
@@ -153,8 +158,11 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
   // Filter workouts to show only those of the current user
   const userWorkouts = workouts.filter(workout => workout.userId === currentUserId);
 
+  // Sort workouts by a stable criterion, such as ID
+  const sortedUserWorkouts = userWorkouts.sort((a, b) => a.id - b.id);
+
   // Group workout history by date
-  const groupedHistory = workoutHistory?.reduce((acc, history) => {
+  const groupedHistory = workoutHistory.reduce((acc, history) => {
     const date = new Date(history.date).toDateString();
     if (!acc[date]) {
       acc[date] = [];
@@ -168,10 +176,10 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
         <h2 className="text-2xl font-semibold mb-4 text-center">Your Workouts</h2>
         <div className="space-y-4">
-          {userWorkouts.length === 0 ? (
+          {sortedUserWorkouts.length === 0 ? (
             <p className="text-center">No workouts found.</p>
           ) : (
-            userWorkouts.map((workout) => (
+            sortedUserWorkouts.map((workout) => (
               <div key={workout.id} className="mb-4">
                 <WorkoutCard workout={workout} isUser={true} />
                 {isEditing && (

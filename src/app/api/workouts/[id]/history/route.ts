@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { workoutsHistory } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, gt, and, desc } from "drizzle-orm";
 
 export const GET = async (req: NextRequest) => {
   const workoutId = req.nextUrl.pathname.split("/")[3]; // Extract the workout ID from the URL
@@ -11,10 +11,18 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
+    const fourWeeksAgo = new Date(Date.now() - 4 * 7 * 24 * 60 * 60 * 1000);
+
     const history = await db
       .select()
       .from(workoutsHistory)
-      .where(eq(workoutsHistory.workoutId, Number(workoutId)));
+      .where(
+        and(
+          eq(workoutsHistory.workoutId, Number(workoutId)),
+          gt(workoutsHistory.createdAt, fourWeeksAgo),
+        ),
+      )
+      .orderBy(desc(workoutsHistory.createdAt));
 
     return NextResponse.json(history);
   } catch (error) {

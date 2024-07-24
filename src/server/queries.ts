@@ -192,3 +192,22 @@ export async function getAllWorkoutsGroupedByUser(): Promise<GroupedWorkouts> {
 
   return groupedWorkouts;
 }
+
+// Function for toggling workout visibility
+export async function toggleWorkoutVisibility(
+  id: number,
+  showWorkout: boolean,
+) {
+  const user = auth();
+
+  if (!user.userId) throw new Error("Unauthorized");
+
+  // Update the show_workout field
+  const updatedWorkout = await db
+    .update(workouts)
+    .set({ show_workout: showWorkout })
+    .where(eq(workouts.id, id))
+    .returning();
+
+  return updatedWorkout;
+}
