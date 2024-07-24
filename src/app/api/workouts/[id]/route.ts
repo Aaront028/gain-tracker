@@ -1,5 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { deleteWorkout, updateWorkout } from "~/server/queries";
+import {
+  deleteWorkout,
+  toggleWorkoutVisibility,
+  updateWorkout,
+} from "~/server/queries";
 
 interface WorkoutDataType {
   exerciseName?: string;
@@ -9,9 +13,28 @@ interface WorkoutDataType {
   show_workout?: boolean;
 }
 
+// export const PUT = async (req: NextRequest) => {
+//   try {
+//     console.log("i'm in the updateworking function");
+//     const url = new URL(req.url);
+//     const id = url.pathname.split("/").pop();
+
+//     if (!id) {
+//       return new NextResponse("ID parameter is required", { status: 400 });
+//     }
+
+//     const workoutData = (await req.json()) as WorkoutDataType;
+
+//     await updateWorkout(Number(id), workoutData);
+
+//     return new NextResponse("Workout updated successfully", { status: 200 });
+//   } catch (error) {
+//     console.error("Error updating workout:", error);
+//     return new NextResponse("Failed to update workout", { status: 500 });
+//   }
+// };
 export const PUT = async (req: NextRequest) => {
   try {
-    console.log("i'm in the updateworking function");
     const url = new URL(req.url);
     const id = url.pathname.split("/").pop();
 
@@ -19,9 +42,19 @@ export const PUT = async (req: NextRequest) => {
       return new NextResponse("ID parameter is required", { status: 400 });
     }
 
-    const workoutData = (await req.json()) as WorkoutDataType;
+    const workoutData = (await req.json()) as Partial<WorkoutDataType>;
 
-    await updateWorkout(Number(id), workoutData);
+    if (
+      "show_workout" in workoutData &&
+      Object.keys(workoutData).length === 1
+    ) {
+      // Ensure show_workout is a boolean
+      const showWorkout = !!workoutData.show_workout;
+      await toggleWorkoutVisibility(Number(id), showWorkout);
+    } else {
+      // Handle general update
+      await updateWorkout(Number(id), workoutData);
+    }
 
     return new NextResponse("Workout updated successfully", { status: 200 });
   } catch (error) {

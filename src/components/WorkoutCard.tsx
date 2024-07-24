@@ -1,3 +1,4 @@
+// WorkoutCard.tsx
 import React from 'react';
 import Tooltip from '~/app/utils/Tooltip';
 
@@ -9,18 +10,34 @@ interface Workout {
   reps: number;
   show_workout: boolean;
 }
-interface WorkoutCardProps {
-  workout: Workout;
+
+interface WorkoutHistoryEntry {
+  id: number;
+  date: Date;
+  exerciseName: string;
+  weight: number;
+  sets: number;
+  reps: number;
 }
 
-const WorkoutCard: React.FC<WorkoutCardProps> = ({ workout }) => {
+interface WorkoutCardProps {
+  workout: Workout;
+  isUser: boolean;
+}
+
+const WorkoutCard: React.FC<WorkoutCardProps> = ({ workout, isUser }) => {
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+    <div className="bg-gray-800 p-4 rounded-lg shadow-md relative">
       <div className="flex justify-between">
         <span className="flex-1 text-center font-medium">{workout.exerciseName}</span>
-        <span className={`flex-1 text-center ${!workout.show_workout ? 'filter blur-sm' : ''}`}>{workout.weight} kgs</span>
-        <span className={`flex-1 text-center ${!workout.show_workout ? 'filter blur-sm' : ''}`}>{workout.sets} sets</span>
-        <span className={`flex-1 text-center ${!workout.show_workout ? 'filter blur-sm' : ''}`}>{workout.reps} reps</span>
+        {isUser ? (
+          <><span className={`flex-1 text-center`}>{workout.weight} kgs</span><span className={`flex-1 text-center`}>{workout.sets} sets</span><span className={`flex-1 text-center`}>{workout.reps} reps</span></>
+
+        ) : (<>
+          <span className={`flex-1 text-center ${!workout.show_workout ? 'filter blur-sm' : ''}`}>{workout.weight} kgs</span>
+          <span className={`flex-1 text-center ${!workout.show_workout ? 'filter blur-sm' : ''}`}>{workout.sets} sets</span>
+          <span className={`flex-1 text-center ${!workout.show_workout ? 'filter blur-sm' : ''}`}>{workout.reps} reps</span> </>)}
+
         {!workout.show_workout && (
           <Tooltip content="This workout is currently hidden.">
             <div className="absolute inset-0 bg-black opacity-50 rounded-lg"></div>

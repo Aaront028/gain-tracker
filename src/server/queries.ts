@@ -8,10 +8,7 @@ import { and, eq } from "drizzle-orm";
 export async function getMyImages() {
   const user = auth();
 
-  // if (!user.userId) throw new Error("Unauthorized");
-
   const images = await db.query.images.findMany({
-    // where: (model, {eq}) => eq(model.userId, user.userId),
     orderBy: (model, { desc }) => desc(model.id),
   });
   return images;
@@ -20,15 +17,11 @@ export async function getMyImages() {
 export async function getImage(id: number) {
   const user = auth();
 
-  // if (!user.userId) throw new Error("Unauthorized");
-
   const image = await db.query.images.findFirst({
     where: (model, { eq }) => eq(model.id, id),
   });
 
   if (!image) throw new Error("Image not found");
-
-  // if (image.userId !== user.userId) throw new Error("Unauthorized");
 
   return image;
 }
@@ -63,19 +56,58 @@ export async function addWorkout(workout: NewWorkout) {
   return newWorkout;
 }
 
+interface Workout {
+  id: number;
+  userId: string;
+  userName: string;
+  userAvatar: string | null;
+  date: Date | null;
+  exerciseId: number;
+  exerciseName: string;
+  weight: number;
+  sets: number;
+  reps: number;
+  show_workout: boolean;
+}
+
 type UpdateWorkoutData = {
   exerciseName?: string;
   weight?: number;
   sets?: number;
   reps?: number;
+  show_workout?: boolean;
 };
 
 export async function updateWorkout(id: number, data: UpdateWorkoutData) {
-  console.log("i'm in the updateworking function");
+  console.log("I'm in the updateWorkout function");
   const user = auth();
 
   if (!user.userId) throw new Error("Unauthorized");
 
+  // Fetch the current workout state with explicit typing
+  const currentWorkout: Workout | undefined = await db
+    .select()
+    .from(workouts)
+    .where(eq(workouts.id, id))
+    .limit(1) // Ensuring only one result is fetched
+    .then((results) => results[0]); // Assuming results is an array
+
+  if (!currentWorkout) throw new Error("Workout not found");
+
+  // Insert the current workout state into workoutsHistory
+  await db.insert(workoutsHistory).values({
+    workoutId: currentWorkout.id,
+    userId: currentWorkout.userId,
+    date: currentWorkout.date ?? new Date(),
+    exerciseId: currentWorkout.exerciseId,
+    exerciseName: currentWorkout.exerciseName,
+    weight: currentWorkout.weight,
+    sets: currentWorkout.sets,
+    reps: currentWorkout.reps,
+    createdAt: new Date(), // Ensure createdAt is set
+  });
+
+  // Update the workout
   const updatedWorkout = await db
     .update(workouts)
     .set(data)
@@ -84,14 +116,6 @@ export async function updateWorkout(id: number, data: UpdateWorkoutData) {
 
   return updatedWorkout;
 }
-
-// export async function deleteWorkout(id: number) {
-//   const deletedWorkout = await db.delete(workouts)
-//     .where(eq(workouts.id, id))
-//     .returning();
-
-//   return deletedWorkout;
-// }
 
 export async function deleteWorkout(id: number) {
   try {
@@ -110,21 +134,9 @@ export async function deleteWorkout(id: number) {
     throw error; // Ensure the error is propagated
   }
 }
-// Define interfaces
-interface Workout {
-  id: number;
-  exerciseName: string;
-  weight: number;
-  sets: number;
-  reps: number;
-}
-
-interface User {
-  name: string;
-}
 
 interface WorkoutWithUser extends Workout {
-  name: string; // user's name
+  name: string;
 }
 
 type GroupedWorkouts = Record<string, Workout[]>;
@@ -168,9 +180,34 @@ export async function getAllWorkoutsGroupedByUser(): Promise<GroupedWorkouts> {
         weight: workout.weight,
         sets: workout.sets,
         reps: workout.reps,
+        userId: "",
+        userName: "",
+        userAvatar: null,
+        date: null,
+        exerciseId: 0,
+        show_workout: false,
       });
     }
   });
 
   return groupedWorkouts;
+}
+
+// Function for toggling workout visibility
+export async function toggleWorkoutVisibility(
+  id: number,
+  showWorkout: boolean,
+) {
+  const user = auth();
+
+  if (!user.userId) throw new Error("Unauthorized");
+
+  // Update the show_workout field
+  const updatedWorkout = await db
+    .update(workouts)
+    .set({ show_workout: showWorkout })
+    .where(eq(workouts.id, id))
+    .returning();
+
+  return updatedWorkout;
 }
