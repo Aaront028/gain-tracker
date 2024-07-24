@@ -64,7 +64,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
                   </h3>
                   {userWorkouts.map((workout) => (
                     <div key={workout.id} className="mb-4">
-                      <WorkoutCard workout={workout} />
+                      <WorkoutCard workout={workout} isUser={false} />
                     </div>
                   ))}
                 </div>
