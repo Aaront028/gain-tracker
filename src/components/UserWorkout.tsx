@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from "react";
-import HistoryCard from "./HistoryCard"; // Import the new HistoryCard component
+import React, { useState, useEffect } from "react";
+import HistoryCard from "./HistoryCard";
 import WorkoutForm from "./WorkoutForm";
 import WorkoutUpdateForm from "./WorkoutUpdateForm";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import Modal from "../app/@modal/Modal";
 import ConfirmationModal from "../app/@modal/ConfirmationModal";
 import { toast } from "sonner";
 import WorkoutCard from "./WorkoutCard";
+import { Edit, Trash2, Eye, EyeOff, History } from 'lucide-react';
 
 interface Workout {
   id: number;
@@ -31,6 +32,7 @@ interface Exercise {
 
 interface WorkoutHistory {
   id: number;
+  workoutId: number;
   date: Date;
   exerciseName: string;
   weight: number;
@@ -56,6 +58,11 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
   const [workoutHistory, setWorkoutHistory] = useState<WorkoutHistory[]>([]);
   const [historyVisible, setHistoryVisible] = useState<number[]>([]);
   const [fetchedHistories, setFetchedHistories] = useState<number[]>([]);
+
+  useEffect(() => {
+    console.log("Workouts:", workouts);
+    console.log("Current workout history:", workoutHistory);
+  }, [workouts, workoutHistory]);
 
   const handleIsEdit = () => {
     setIsEditing(!isEditing);
@@ -134,24 +141,25 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
   };
 
   const handleToggleHistory = async (workoutId: number) => {
+    console.log(`Toggling history for workout ID: ${workoutId}`);
     if (historyVisible.includes(workoutId)) {
-      // If history is currently visible, hide it
       setHistoryVisible(historyVisible.filter(id => id !== workoutId));
     } else {
-      // If history is not currently visible, show it
-      if (!fetchedHistories.includes(workoutId)) {
-        // Fetch history only if it hasn't been fetched before
+      try {
+        console.log(`Fetching history for workout ID: ${workoutId}`);
         const response = await fetch(`/api/workouts/${workoutId}/history`);
-        const history: WorkoutHistory[] = await response.json() as WorkoutHistory[];
+        if (!response.ok) {
+          throw new Error(`Failed to fetch workout history: ${response.statusText}`);
+        }
+        const history: WorkoutHistory[] = await response.json();
+        console.log(`Received history for workout ID ${workoutId}:`, history);
 
-        // Ensure no duplicate histories are added
-        const existingHistoryIds = new Set(workoutHistory.map(h => h.id));
-        const newHistory = history.filter(h => !existingHistoryIds.has(h.id));
-
-        setWorkoutHistory(prevHistory => [...prevHistory, ...newHistory]);
-        setFetchedHistories(prevFetched => [...prevFetched, workoutId]);
+        setWorkoutHistory(prevHistory => [...prevHistory, ...history]);
+        setHistoryVisible(prev => [...prev, workoutId]);
+      } catch (error) {
+        console.error('Error fetching workout history:', error);
+        toast.error('Failed to fetch workout history');
       }
-      setHistoryVisible([...historyVisible, workoutId]);
     }
   };
 
@@ -159,17 +167,7 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
   const userWorkouts = workouts.filter(workout => workout.userId === currentUserId);
 
   // Sort workouts by a stable criterion, such as ID
-  const sortedUserWorkouts = userWorkouts.sort((a, b) => a.id - b.id);
-
-  // Group workout history by date
-  const groupedHistory = workoutHistory.reduce((acc, history) => {
-    const date = new Date(history.date).toDateString();
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(history);
-    return acc;
-  }, {} as Record<string, WorkoutHistory[]>);
+  const sortedUserWorkouts = userWorkouts.sort((a, b) => b.id - a.id);
 
   const scrollableStyle = {
     overflowY: 'auto' as const,
@@ -184,52 +182,76 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
     <div className="flex flex-col p-6">
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
         <h2 className="text-2xl font-semibold mb-4 text-center">Your Workouts</h2>
-        <div style={scrollableStyle} className="space-y-4 max-h-[60vh]">
+        <div className="space-y-4 max-h-[60vh] pr-2" style={scrollableStyle}>
           {sortedUserWorkouts.length === 0 ? (
             <p className="text-center">No workouts found.</p>
           ) : (
             sortedUserWorkouts.map((workout) => (
-              <div key={workout.id} className="mb-4">
+              <div key={workout.id} className="mb-4 bg-gray-800 rounded-lg overflow-hidden transition-all duration-300 ease-in-out">
                 <WorkoutCard workout={workout} isUser={true} />
-                {isEditing && (
-                  <div className="mt-2 space-x-2">
+                <div className={`transition-all duration-300 ease-in-out ${isEditing ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <div className="p-2 flex justify-between items-center">
                     <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
                       onClick={() => handleEditClick(workout)}
                     >
-                      Edit
+                      <Edit size={20} />
                     </button>
                     <button
-                      className="bg-red-500 text-white px-4 py-2 rounded"
+                      className="text-red-400 hover:text-red-300 transition-colors duration-200"
                       onClick={() => handleDeleteClick(workout)}
                     >
-                      Delete
+                      <Trash2 size={20} />
                     </button>
                     <button
-                      className={`px-4 py-2 rounded text-white ${workout.show_workout ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+                      className={`transition-colors duration-200 ${workout.show_workout ? 'text-green-400 hover:text-green-300' : 'text-yellow-400 hover:text-yellow-300'}`}
                       onClick={() => handleShowWorkout(workout)}
                     >
-                      {workout.show_workout ? "Hide Workout" : "Show Workout"}
+                      {workout.show_workout ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
                     <button
-                      className="bg-gray-500 text-white px-4 py-2 rounded"
+                      className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
                       onClick={() => handleToggleHistory(workout.id)}
                     >
-                      {historyVisible.includes(workout.id) ? "Hide History" : "Show History"}
+                      <History size={20} />
                     </button>
                   </div>
-                )}
-                {historyVisible.includes(workout.id) && groupedHistory && (
-                  <div className="mt-2 bg-gray-800 p-4 rounded-lg">
-                    <h3 className="text-lg font-semibold text-white">Workout History</h3>
-                    {Object.entries(groupedHistory).map(([date, histories]) => (
-                      <div key={date} className="mb-4">
-                        <h4 className="text-md font-medium text-white">{date}</h4>
-                        {histories.filter(history => history.exerciseName === workout.exerciseName).map(history => (
-                          <HistoryCard key={history.id} history={history} />
-                        ))}
-                      </div>
-                    ))}
+                </div>
+                {historyVisible.includes(workout.id) && (
+                  <div className="p-4 bg-gray-700 rounded-b-lg">
+                    <h3 className="text-lg font-semibold text-white mb-2">Workout History</h3>
+                    {(() => {
+                      const history = workoutHistory.filter(h => h.workoutId === workout.id);
+                      if (history.length > 0) {
+                        return (
+                          <table className="w-full text-sm text-left text-gray-300">
+                            <thead className="text-xs uppercase bg-gray-700 text-gray-400">
+                              <tr>
+                                <th scope="col" className="px-6 py-3">Date</th>
+                                <th scope="col" className="px-6 py-3">Weight</th>
+                                <th scope="col" className="px-6 py-3">Sets</th>
+                                <th scope="col" className="px-6 py-3">Reps</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {history
+                                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                                .map(historyItem => (
+                                  <tr key={historyItem.id} className="bg-gray-800 border-b border-gray-700">
+                                    <td className="px-6 py-4">{new Date(historyItem.date).toLocaleDateString()}</td>
+                                    <td className="px-6 py-4">{historyItem.weight} kgs</td>
+                                    <td className="px-6 py-4">{historyItem.sets}</td>
+                                    <td className="px-6 py-4">{historyItem.reps}</td>
+                                  </tr>
+                                ))
+                              }
+                            </tbody>
+                          </table>
+                        );
+                      } else {
+                        return <p className="text-gray-400">No history available for this workout.</p>;
+                      }
+                    })()}
                   </div>
                 )}
               </div>
@@ -238,18 +260,18 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
         </div>
       </div>
 
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mb-4 space-x-4">
         <button
-          className="bg-green-500 text-white px-4 py-2 rounded mb-4 mr-4"
+          className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full transition-colors duration-200 flex items-center"
           onClick={handleAddButtonClick}
         >
-          Add Workout
+          <span className="mr-2">+</span> Add Workout
         </button>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+          className={`px-6 py-2 rounded-full transition-colors duration-200 flex items-center ${isEditing ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
           onClick={handleIsEdit}
         >
-          {isEditing ? "Hide" : "Edit"}
+          {isEditing ? 'Done' : 'Edit'}
         </button>
       </div>
 

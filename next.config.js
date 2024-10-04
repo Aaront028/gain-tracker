@@ -19,6 +19,11 @@ const coreConfig = {
         hostname: "img.clerk.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "source.unsplash.com",
+        pathname: "**",
+      },
     ],
   },
 

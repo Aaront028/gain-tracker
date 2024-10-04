@@ -4,18 +4,10 @@ import "@uploadthing/react/styles.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import TopNav from "../components/TopNav";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 import Footer from "../components/Footer";
 import { Toaster } from "~/components/ui/sonner";
 import { CSPostHogProvider } from "./_analytics/provider";
-
-
 
 export const metadata: Metadata = {
   title: "Gain Tracker App",
@@ -33,15 +25,13 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <CSPostHogProvider>
-        <html lang="en" className={`${GeistSans.variable} flex flex-col gap-4 dark`}>
-          <body className="flex flex-col min-h-screen">
-
+        <html lang="en" className={`${GeistSans.variable} dark`}>
+          <body className="flex flex-col min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
             <TopNav />
-            <main className="flex-grow">
+            <main className="flex-grow container mx-auto px-4">
               {children}
               {modal}
               <div id="modal-root" />
-
             </main>
             <Toaster />
             <Footer />
