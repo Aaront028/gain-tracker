@@ -171,11 +171,20 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
     return acc;
   }, {} as Record<string, WorkoutHistory[]>);
 
+  const scrollableStyle = {
+    overflowY: 'auto' as const,
+    scrollbarWidth: 'none' as const,
+    msOverflowStyle: 'none' as const,
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
+  };
+
   return (
     <div className="flex flex-col p-6">
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto space-y-4 mb-6">
         <h2 className="text-2xl font-semibold mb-4 text-center">Your Workouts</h2>
-        <div className="space-y-4">
+        <div style={scrollableStyle} className="space-y-4 max-h-[60vh]">
           {sortedUserWorkouts.length === 0 ? (
             <p className="text-center">No workouts found.</p>
           ) : (
@@ -183,46 +192,45 @@ const UserWorkout: React.FC<UserWorkoutProps> = ({ workouts, currentUserId, curr
               <div key={workout.id} className="mb-4">
                 <WorkoutCard workout={workout} isUser={true} />
                 {isEditing && (
-                  <>
+                  <div className="mt-2 space-x-2">
                     <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                      className="bg-blue-500 text-white px-4 py-2 rounded"
                       onClick={() => handleEditClick(workout)}
                     >
                       Edit
                     </button>
                     <button
-                      className="bg-red-500 text-white px-4 py-2 rounded mt-2 ml-2"
+                      className="bg-red-500 text-white px-4 py-2 rounded"
                       onClick={() => handleDeleteClick(workout)}
                     >
                       Delete
                     </button>
                     <button
-                      className={`px-4 py-2 rounded mt-2 ml-2 text-white ${workout.show_workout ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-                        }`}
+                      className={`px-4 py-2 rounded text-white ${workout.show_workout ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
                       onClick={() => handleShowWorkout(workout)}
                     >
                       {workout.show_workout ? "Hide Workout" : "Show Workout"}
                     </button>
                     <button
-                      className="bg-gray-500 text-white px-4 py-2 rounded mt-2 ml-2"
+                      className="bg-gray-500 text-white px-4 py-2 rounded"
                       onClick={() => handleToggleHistory(workout.id)}
                     >
                       {historyVisible.includes(workout.id) ? "Hide History" : "Show History"}
                     </button>
-                    {historyVisible.includes(workout.id) && groupedHistory && (
-                      <div className="mt-2 bg-gray-800 p-4 rounded-lg">
-                        <h3 className="text-lg font-semibold text-white">Workout History</h3>
-                        {Object.entries(groupedHistory).map(([date, histories]) => (
-                          <div key={date} className="mb-4">
-                            <h4 className="text-md font-medium text-white">{date}</h4>
-                            {histories.filter(history => history.exerciseName === workout.exerciseName).map(history => (
-                              <HistoryCard key={history.id} history={history} />
-                            ))}
-                          </div>
+                  </div>
+                )}
+                {historyVisible.includes(workout.id) && groupedHistory && (
+                  <div className="mt-2 bg-gray-800 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-white">Workout History</h3>
+                    {Object.entries(groupedHistory).map(([date, histories]) => (
+                      <div key={date} className="mb-4">
+                        <h4 className="text-md font-medium text-white">{date}</h4>
+                        {histories.filter(history => history.exerciseName === workout.exerciseName).map(history => (
+                          <HistoryCard key={history.id} history={history} />
                         ))}
                       </div>
-                    )}
-                  </>
+                    ))}
+                  </div>
                 )}
               </div>
             ))
