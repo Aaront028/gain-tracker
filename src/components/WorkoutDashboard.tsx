@@ -13,7 +13,7 @@ interface Workout {
   userId: string;
   userName: string;
   userAvatar: string | null;
-  show_workout: boolean; // Add this line
+  show_workout: boolean;
 }
 
 interface Exercise {
@@ -39,6 +39,15 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
     return map;
   }, new Map<string, Workout[]>());
 
+  const scrollableStyle = {
+    overflowY: 'auto' as const,
+    scrollbarWidth: 'none' as const,
+    msOverflowStyle: 'none' as const,
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-7xl mx-auto space-y-4 mb-6">
@@ -51,7 +60,7 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
               const userName = userWorkouts[0]?.userName;
               const userAvatar = userWorkouts[0]?.userAvatar;
               return (
-                <div key={userId} className="bg-gray-800 p-4 rounded-lg shadow-md">
+                <div key={userId} className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col h-[400px]">
                   <h3 className="text-xl font-semibold mb-4 flex items-center">
                     <Image
                       src={userAvatar ?? '/default-avatar.png'}
@@ -62,11 +71,13 @@ const WorkoutDashboard: React.FC<WorkoutDashboardProps> = ({ workouts, currentUs
                     />
                     {userName}&apos;s Workouts
                   </h3>
-                  {userWorkouts.map((workout) => (
-                    <div key={workout.id} className="mb-4">
-                      <WorkoutCard workout={workout} isUser={false} />
-                    </div>
-                  ))}
+                  <div style={scrollableStyle} className="flex-grow">
+                    {userWorkouts.map((workout) => (
+                      <div key={workout.id} className="mb-4">
+                        <WorkoutCard workout={workout} isUser={false} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               );
             })
