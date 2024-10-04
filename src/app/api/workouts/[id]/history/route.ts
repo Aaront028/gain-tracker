@@ -1,10 +1,10 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { workoutsHistory } from "~/server/db/schema";
 import { eq, gt, and, desc } from "drizzle-orm";
 
-export const GET = async (req: NextRequest) => {
-  const workoutId = req.nextUrl.pathname.split("/")[3]; // Extract the workout ID from the URL
+export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+  const workoutId = params.id;
 
   if (!workoutId || isNaN(Number(workoutId))) {
     return new NextResponse("Invalid or missing workout ID", { status: 400 });
