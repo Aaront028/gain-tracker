@@ -4,14 +4,10 @@ import { env } from "~/env";
 
 export default {
   schema: "./src/server/db/schema.ts",
-  dialect: "postgresql",
+  driver: "pg",
   dbCredentials: {
-    url: env.POSTGRES_URL,
+    connectionString: env.POSTGRES_URL,
   },
   tablesFilter: ["gain-tracker_*"],
-
   out: "./src/server/db/migrations",
-  migrations: {
-    table: "my_migrations_table", // Optional: Customize the migrations table name
-  },
 } satisfies Config;
