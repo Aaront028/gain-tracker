@@ -3,6 +3,7 @@ import "@uploadthing/react/styles.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import { headers } from "next/headers";
 import TopNav from "../components/TopNav";
 import { ClerkProvider } from '@clerk/nextjs'
 import Footer from "../components/Footer";
@@ -15,6 +16,21 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+function clerkProxyUrl() {
+  const headerStore = headers();
+  const host =
+    headerStore.get("x-forwarded-host")?.split(",")[0]?.trim() ??
+    headerStore.get("host");
+  if (!host) return undefined;
+
+  const forwardedProto = headerStore.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const proto =
+    forwardedProto ??
+    (host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https");
+
+  return `${proto}://${host}/__clerk`;
+}
+
 export default function RootLayout({
   children,
   modal
@@ -23,7 +39,7 @@ export default function RootLayout({
   modal: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider proxyUrl={clerkProxyUrl()}>
       <CSPostHogProvider>
         <html lang="en" className={`${GeistSans.variable} dark`}>
           <body className="flex flex-col min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
